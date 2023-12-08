@@ -11,8 +11,4 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
     }
 
     override fun initViews() { }
-
-    companion object {
-        fun getInstance() = FavoriteFragment()
-    }
 }
