@@ -6,25 +6,23 @@
     android:layout_height="match_parent"
     tools:context=".MarvelActivity">
 
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vp_tabs"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/layout_tab"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+    </androidx.viewpager2.widget.ViewPager2>
+
     <com.google.android.material.tabs.TabLayout
-        app:tabIndicatorFullWidth="true"
+        android:id="@+id/layout_tab"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <com.google.android.material.tabs.TabItem
-            android:text="SEARCH"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-        </com.google.android.material.tabs.TabItem>
-
-        <com.google.android.material.tabs.TabItem
-            android:text="FAVORITE"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-        </com.google.android.material.tabs.TabItem>
+        app:layout_constraintStart_toStartOf="parent"
+        app:tabIndicatorFullWidth="true">
     </com.google.android.material.tabs.TabLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

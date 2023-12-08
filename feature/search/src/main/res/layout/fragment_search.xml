@@ -11,7 +11,7 @@
         android:id="@+id/editText"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:background="null"
+        android:background="@null"
         android:hint="마블 영웅 이름을 입력하시오."
         android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
