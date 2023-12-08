@@ -1,21 +1,13 @@
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    kotlin("kapt")
 }
 
 android {
     namespace = "jiwondev.feature.marvel"
     compileSdk = 33
-
-    defaultConfig {
-        applicationId = "jiwondev.feature.marvel"
-        minSdk = 26
-        targetSdk = 33
-        versionCode = 1
-        versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
+    viewBinding { enable = true  }
 
     buildTypes {
         release {
