@@ -1,9 +1,7 @@
 package jiwondev.shoplivetask
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 
-class MarvelApplication : Application() {
-    override fun onCreate() {
-        super.onCreate()
-    }
-}
+@HiltAndroidApp
+class MarvelApplication : Application()
