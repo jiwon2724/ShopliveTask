@@ -1,20 +1,14 @@
 package jiwondev.feature.favorite
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import jiwondev.core.base.BaseFragment
+import jiwondev.feature.favorite.databinding.FragmentFavoriteBinding
 
-class FavoriteFragment : Fragment() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
+    override fun bindingFactory(inflater: LayoutInflater, parent: ViewGroup?): FragmentFavoriteBinding {
+        return FragmentFavoriteBinding.inflate(inflater, parent, false)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_favorite, container, false)
-    }
+    override fun initViews() { }
 }

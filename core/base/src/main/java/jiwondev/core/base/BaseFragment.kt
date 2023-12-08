@@ -12,6 +12,10 @@ abstract class BaseFragment<T : ViewBinding> : Fragment() {
     val binding: T
         get() = _binding ?: error("binding not initialized yet")
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -20,6 +24,13 @@ abstract class BaseFragment<T : ViewBinding> : Fragment() {
         _binding = bindingFactory(inflater, container)
         return _binding?.root
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initViews()
+    }
+
+    open fun initViews() { }
 
     abstract fun bindingFactory(inflater: LayoutInflater, parent: ViewGroup?): T
 
