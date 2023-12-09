@@ -8,7 +8,7 @@ object Constant {
     val timeStamp = Timestamp(System.currentTimeMillis()).time.toString()
 
     fun getHash(): String {
-        val hash = "$timeStamp${BuildConfig.PUBLIC_KEY}${BuildConfig.PRIVATE_KEY}".toByteArray()
+        val hash = "$timeStamp${BuildConfig.PRIVATE_KEY}${BuildConfig.PUBLIC_KEY}".toByteArray()
         val md = MessageDigest.getInstance("MD5").digest(hash)
         return md.joinToString("") { "%02x".format(it) }
     }

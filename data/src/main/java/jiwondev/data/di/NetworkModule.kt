@@ -6,6 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import jiwondev.data.BuildConfig
+import jiwondev.data.api.MarvelCharacterApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -43,4 +44,9 @@ object NetworkModule {
             readTimeout(30, TimeUnit.SECONDS)
         }.build()
     }
+
+    @Singleton
+    @Provides
+    fun provideCharacterApi(retrofit: Retrofit): MarvelCharacterApi =
+        retrofit.create(MarvelCharacterApi::class.java)
 }

@@ -3,8 +3,10 @@ package jiwondev.feature.marvel
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.google.android.material.tabs.TabLayoutMediator
+import dagger.hilt.android.AndroidEntryPoint
 import jiwondev.feature.marvel.databinding.ActivityMarvelBinding
 
+@AndroidEntryPoint
 class MarvelActivity : AppCompatActivity() {
     private val binding: ActivityMarvelBinding by lazy { ActivityMarvelBinding.inflate(layoutInflater) }
 
