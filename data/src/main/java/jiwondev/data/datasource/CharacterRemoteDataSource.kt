@@ -1,6 +1,5 @@
 package jiwondev.data.datasource
 
-import jiwondev.data.BuildConfig
 import jiwondev.data.model.CharacterResponse
 
 interface CharacterRemoteDataSource {
