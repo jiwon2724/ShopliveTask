@@ -8,6 +8,7 @@ retrofit = "2.9.0"
 serializationConverter = "1.0.0"
 serializationJson = "1.5.1"
 okHttp = "4.10.0"
+javaxInject = "1"
 
 [libraries]
 # android
@@ -21,6 +22,7 @@ google-material = { group = "com.google.android.material", name = "material", ve
 # hilt
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "javaxInject" }
 
 # network
 serialization-converter = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "serializationConverter" }

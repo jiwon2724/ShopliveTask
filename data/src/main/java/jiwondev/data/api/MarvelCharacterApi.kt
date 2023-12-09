@@ -1,17 +1,17 @@
-package jiwondev.data
+package jiwondev.data.api
 
-import androidx.resourceinspection.annotation.Attribute.IntMap
-import jiwondev.data.response.CharacterResponse
+import jiwondev.data.BuildConfig
+import jiwondev.data.model.CharacterResponse
 import retrofit2.http.GET
 
 interface MarvelCharacterApi {
     @GET("characters")
     suspend fun getCharacterResponse(
-        ts: String,
+        ts: String = "",
         apiKey: String = BuildConfig.PUBLIC_KEY,
-        hash: String,
+        hash: String = "",
         nameStartsWith: String,
-        limit: Int,
-        offset: Int
+        limit: Int = 10,
+        offset: Int = 10
     ): CharacterResponse
 }
