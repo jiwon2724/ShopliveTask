@@ -10,8 +10,8 @@ interface MarvelCharacterApi {
     @GET("characters")
     suspend fun getCharacterResponse(
         @Query("ts") ts: String = Constant.timeStamp,
+        @Query("apikey") apiKey: String = BuildConfig.PUBLIC_KEY,
         @Query("hash") hash: String = Constant.getHash(),
-        @Query("apiKey") apiKey: String = BuildConfig.PUBLIC_KEY,
         @Query("nameStartsWith") nameStartsWith: String,
         @Query("limit") limit: Int = 10,
         @Query("offset") offset: Int = 10
