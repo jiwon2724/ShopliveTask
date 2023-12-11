@@ -47,5 +47,6 @@ dependencies {
     kapt(libs.hilt.compiler)
 
     implementation(project(":core:base"))
+    implementation(project(":core:ui"))
     implementation(project(":domain"))
 }
