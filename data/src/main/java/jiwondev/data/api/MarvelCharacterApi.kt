@@ -14,6 +14,6 @@ interface MarvelCharacterApi {
         @Query("hash") hash: String = Constant.getHash(),
         @Query("nameStartsWith") nameStartsWith: String,
         @Query("limit") limit: Int = 10,
-        @Query("offset") offset: Int = 10
+        @Query("offset") offset: Int = 0
     ): CharacterResponse
 }
