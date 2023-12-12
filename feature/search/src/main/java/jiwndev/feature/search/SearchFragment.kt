@@ -28,6 +28,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         initRecyclerView()
         startObservingSearch()
         startObservingState()
+        startPagination()
     }
 
     private fun initRecyclerView() {
@@ -50,7 +51,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     private fun startObservingState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-
                 searchViewModel.characterState.collectLatest { state ->
                     when (state) {
                         is CharacterUiState.Init -> Unit
@@ -72,11 +72,20 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         }
     }
 
+    private fun startPagination() = with(binding) {
+        rvChracter.setOnScrollChangeListener { _, _, _, _, _ ->
+            if (rvChracter.canScrollVertically(SCROLL_END)) {
+
+            }
+        }
+    }
+
     private fun initAdapter(): SearchAdapter {
         return SearchAdapter()
     }
 
     companion object {
         private const val INPUT_SIZE = 2
+        private const val SCROLL_END = 1
     }
 }
