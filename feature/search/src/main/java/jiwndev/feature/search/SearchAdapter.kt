@@ -9,8 +9,8 @@ import jiwondev.core.ui.databinding.ItemCharacterBinding
 import jiwondev.domain.model.CharacterInfo
 
 class SearchAdapter(
-    private val characters: List<CharacterInfo>,
-    private val onClick: (Int) -> Unit
+
+//    private val onClick: (Int) -> Unit
 ) : ListAdapter<CharacterInfo, CharacterViewHolder>(Constant.CHARACTER_DIFF_CALLBACK) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharacterViewHolder {
         return CharacterViewHolder(
@@ -19,11 +19,17 @@ class SearchAdapter(
                 parent,
                 false
             ),
-            onClick = onClick
+//            onClick = onClick
         )
     }
 
     override fun onBindViewHolder(holder: CharacterViewHolder, position: Int) {
-        holder.bind(characters[position])
+        holder.bind(getItem(position))
+    }
+
+    fun addCharacterItem(newItem: List<CharacterInfo>) {
+        val currentList = currentList.toMutableList()
+        currentList.addAll(newItem)
+        submitList(currentList)
     }
 }

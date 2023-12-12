@@ -6,7 +6,13 @@ import jiwondev.domain.repository.CharacterRepository
 import javax.inject.Inject
 
 class CharacterUseCase @Inject constructor(private val repository: CharacterRepository) {
-    suspend fun getCharacter(): Result<Character> {
-        return repository.getCharacter("man")
+    suspend fun getCharacter(
+        search: String,
+        offset: Int
+    ): Result<Character> {
+        return repository.getCharacter(
+            nameStartsWith = search,
+            offset = offset
+        )
     }
 }
