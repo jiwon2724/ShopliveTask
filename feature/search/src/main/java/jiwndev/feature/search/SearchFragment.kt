@@ -64,6 +64,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                                 setResultItemCount(state.data.count)
                             }
                             characterAdapter.apply {
+                                submitList(null)
                                 addCharacterItem(state.data.characterInfo)
                             }
                             Log.d("currentList : ", characterAdapter.currentList.size.toString())
