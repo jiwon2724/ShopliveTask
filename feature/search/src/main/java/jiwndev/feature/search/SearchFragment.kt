@@ -2,7 +2,9 @@ package jiwndev.feature.search
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -57,8 +59,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                 searchViewModel.characterState.collectLatest { state ->
                     when (state) {
                         is CharacterUiState.Init -> Unit
-
                         is CharacterUiState.LoadSuccess -> {
+                            binding.progress.visibility = View.GONE
                             searchViewModel.apply {
                                 initPageOffset()
                                 setResultItemCount(state.data.count)
@@ -69,18 +71,14 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                             }
                             Log.d("currentList : ", characterAdapter.currentList.size.toString())
                         }
-
                         is CharacterUiState.LoadFail -> {
-
+                            binding.progress.visibility = View.GONE
+                            Toast.makeText(requireContext(), "데이터 불러오기에 실패했습니다.", Toast.LENGTH_SHORT).show()
                         }
-
-                        is CharacterUiState.Loading -> {
-
-                        }
-
+                        is CharacterUiState.Loading -> binding.progress.visibility = View.VISIBLE
                         is CharacterUiState.PagingSuccess -> {
+                            binding.progress.visibility = View.GONE
                             characterAdapter.addCharacterItem(state.data.characterInfo)
-                            Log.d("currentList : ", characterAdapter.currentList.size.toString())
                         }
                     }
                 }
