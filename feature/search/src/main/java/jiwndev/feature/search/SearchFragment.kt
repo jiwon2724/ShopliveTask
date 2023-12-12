@@ -26,12 +26,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
     override fun initViews() {
         initRecyclerView()
-        characterObserve()
-
-        binding.etSearch.addTextChangedListener { search ->
-            println(search)
-//            searchViewModel.getCharacterData(search.toString())
-        }
+        startObservingSearch()
+        startObservingState()
     }
 
     private fun initRecyclerView() {
@@ -41,10 +37,18 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         }
     }
 
-    private fun characterObserve() {
-        println("characterObserve 호출!")
+    private fun startObservingSearch() {
+        binding.etSearch.addTextChangedListener { search ->
+            if (search.toString().length >= INPUT_SIZE) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    searchViewModel.getCharacterData(search.toString().trim())
+                }
+            }
+        }
+    }
+
+    private fun startObservingState() {
         viewLifecycleOwner.lifecycleScope.launch {
-            searchViewModel.getCharacterData("man")
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
                 searchViewModel.characterState.collectLatest { state ->
@@ -70,5 +74,9 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
     private fun initAdapter(): SearchAdapter {
         return SearchAdapter()
+    }
+
+    companion object {
+        private const val INPUT_SIZE = 2
     }
 }
