@@ -1,15 +1,14 @@
 package jiwndev.feature.search
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jiwondev.core.ui.CharacterUiState
 import jiwondev.domain.Result
-import jiwondev.domain.model.Character
 import jiwondev.domain.model.CharacterInfo
 import jiwondev.domain.usecase.CharacterUseCase
-import kotlinx.coroutines.async
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,8 +18,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(private val characterUseCase: CharacterUseCase) : ViewModel() {
+    private var searchJob: Job = Job()
     var pageOffset = 0
         private set
+
+    var resultItemTotal = 0
+        private set
+
+    private var searchKeyword: String = ""
 
     val characters: ArrayList<CharacterInfo> = arrayListOf()
 
@@ -29,19 +34,31 @@ class SearchViewModel @Inject constructor(private val characterUseCase: Characte
         get() = _characterState.asStateFlow()
 
 
-    suspend fun getCharacterData(search: String) {
-        viewModelScope.launch {
+    fun getCharacterData() {
+        searchJob.cancel()
+        searchJob = viewModelScope.launch {
             _characterState.emit(CharacterUiState.Loading)
-            val characterResponse = async {
-                delay(300)
-                characterUseCase.getCharacter(search, pageOffset)
-            }
-            println("호출! $search")
-            when (val result = characterResponse.await()) {
+            delay(300)
+
+            when (val result = characterUseCase.getCharacter(searchKeyword, pageOffset)) {
                 is Result.Success -> {
                     characters.addAll(result.data.characterInfo)
                     _characterState.emit(CharacterUiState.LoadSuccess(result.data))
                 }
+
+                is Result.Error -> _characterState.emit(CharacterUiState.LoadFail)
+            }
+        }
+    }
+
+    fun loadMore() {
+        viewModelScope.launch {
+            when (val result = characterUseCase.getCharacter(searchKeyword, pageOffset)) {
+                is Result.Success -> {
+                    characters.addAll(result.data.characterInfo)
+                    _characterState.emit(CharacterUiState.PagingSuccess(result.data))
+                }
+
                 is Result.Error -> _characterState.emit(CharacterUiState.LoadFail)
             }
         }
@@ -49,5 +66,17 @@ class SearchViewModel @Inject constructor(private val characterUseCase: Characte
 
     fun increasePageOffset() {
         pageOffset += 10
+    }
+
+    fun initPageOffset() {
+        pageOffset = 0
+    }
+
+    fun setSearchKeyword(search: String) {
+        searchKeyword = search
+    }
+
+    fun setResultItemCount(count: Int) {
+        resultItemTotal = count
     }
 }

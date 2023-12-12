@@ -1,13 +1,17 @@
 package jiwndev.feature.search
 
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import jiwndev.feature.search.databinding.FragmentSearchBinding
 import jiwondev.core.base.BaseFragment
@@ -26,12 +30,9 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
 
     override fun initViews() {
         initRecyclerView()
-        characterObserve()
-
-        binding.etSearch.addTextChangedListener { search ->
-            println(search)
-//            searchViewModel.getCharacterData(search.toString())
-        }
+        startObservingSearch()
+        startObservingState()
+        startPagination()
     }
 
     private fun initRecyclerView() {
@@ -41,26 +42,43 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         }
     }
 
-    private fun characterObserve() {
-        println("characterObserve 호출!")
-        viewLifecycleOwner.lifecycleScope.launch {
-            searchViewModel.getCharacterData("man")
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+    private fun startObservingSearch() {
+        binding.etSearch.addTextChangedListener { search ->
+            if (search.toString().length >= INPUT_SIZE) {
+                searchViewModel.apply {
+                    setSearchKeyword(search.toString().trim())
+                    searchViewModel.getCharacterData()
+                }
+            }
+        }
+    }
 
+    private fun startObservingState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 searchViewModel.characterState.collectLatest { state ->
                     when (state) {
                         is CharacterUiState.Init -> Unit
-
                         is CharacterUiState.LoadSuccess -> {
-                            characterAdapter.addCharacterItem(state.data.characterInfo)
+                            binding.progress.visibility = View.GONE
+                            searchViewModel.apply {
+                                initPageOffset()
+                                setResultItemCount(state.data.count)
+                            }
+                            characterAdapter.apply {
+                                submitList(null)
+                                addCharacterItem(state.data.characterInfo)
+                            }
+                            Log.d("currentList : ", characterAdapter.currentList.size.toString())
                         }
-
                         is CharacterUiState.LoadFail -> {
-
+                            binding.progress.visibility = View.GONE
+                            Toast.makeText(requireContext(), "데이터 불러오기에 실패했습니다.", Toast.LENGTH_SHORT).show()
                         }
-
-                        is CharacterUiState.Loading -> {
-
+                        is CharacterUiState.Loading -> binding.progress.visibility = View.VISIBLE
+                        is CharacterUiState.PagingSuccess -> {
+                            binding.progress.visibility = View.GONE
+                            characterAdapter.addCharacterItem(state.data.characterInfo)
                         }
                     }
                 }
@@ -68,7 +86,32 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         }
     }
 
+
+    private fun startPagination() = with(binding) {
+        rvChracter.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (rvChracter.canScrollVertically(SCROLL_END)) {
+                    if (searchViewModel.resultItemTotal >= searchViewModel.pageOffset) {
+                        searchViewModel.apply {
+                            increasePageOffset()
+                            loadMore()
+                        }
+                    }
+                }
+            }
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) { }
+        })
+
+    }
+
+
     private fun initAdapter(): SearchAdapter {
         return SearchAdapter()
     }
+
+    companion object {
+        private const val INPUT_SIZE = 2
+        private const val SCROLL_END = 1
+    }
 }
+
