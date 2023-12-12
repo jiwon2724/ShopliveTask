@@ -9,6 +9,7 @@ serializationConverter = "1.0.0"
 serializationJson = "1.5.1"
 okHttp = "4.10.0"
 javaxInject = "1"
+coil = "2.5.0"
 
 [libraries]
 # android
@@ -30,5 +31,9 @@ serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serializ
 squareup-okhttp3 = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okHttp" }
 squareup-okhttp3-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okHttp" }
 squareup-retrofit2 = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+
+# image
+# image
+coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 
 [plugins]

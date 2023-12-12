@@ -12,8 +12,9 @@ class CharacterRepositoryImpl @Inject constructor(
     private val characterRemoteDataSource: CharacterRemoteDataSource
 ) : CharacterRepository {
     override suspend fun getCharacter(
-        nameStartsWith: String
+        nameStartsWith: String,
+        offset: Int
     ): Result<Character> {
-        return setResult { CharacterMapper.mapperToCharacter(characterRemoteDataSource.getCharacter(nameStartsWith)) }
+        return setResult { CharacterMapper.mapperToCharacter(characterRemoteDataSource.getCharacter(nameStartsWith, offset)) }
     }
 }
