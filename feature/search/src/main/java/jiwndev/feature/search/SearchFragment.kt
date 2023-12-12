@@ -1,5 +1,6 @@
 package jiwndev.feature.search
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
@@ -8,6 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import jiwndev.feature.search.databinding.FragmentSearchBinding
 import jiwondev.core.base.BaseFragment
@@ -41,8 +43,9 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     private fun startObservingSearch() {
         binding.etSearch.addTextChangedListener { search ->
             if (search.toString().length >= INPUT_SIZE) {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    searchViewModel.getCharacterData(search.toString().trim())
+                searchViewModel.apply {
+                    setSearchKeyword(search.toString().trim())
+                    searchViewModel.getCharacterData()
                 }
             }
         }
@@ -56,7 +59,14 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                         is CharacterUiState.Init -> Unit
 
                         is CharacterUiState.LoadSuccess -> {
-                            characterAdapter.addCharacterItem(state.data.characterInfo)
+                            searchViewModel.apply {
+                                initPageOffset()
+                                setResultItemCount(state.data.count)
+                            }
+                            characterAdapter.apply {
+                                addCharacterItem(state.data.characterInfo)
+                            }
+                            Log.d("currentList : ", characterAdapter.currentList.size.toString())
                         }
 
                         is CharacterUiState.LoadFail -> {
@@ -66,19 +76,35 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
                         is CharacterUiState.Loading -> {
 
                         }
+
+                        is CharacterUiState.PagingSuccess -> {
+                            characterAdapter.addCharacterItem(state.data.characterInfo)
+                            Log.d("currentList : ", characterAdapter.currentList.size.toString())
+                        }
                     }
                 }
             }
         }
     }
 
-    private fun startPagination() = with(binding) {
-        rvChracter.setOnScrollChangeListener { _, _, _, _, _ ->
-            if (rvChracter.canScrollVertically(SCROLL_END)) {
 
+    private fun startPagination() = with(binding) {
+        rvChracter.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (rvChracter.canScrollVertically(SCROLL_END)) {
+                    if (searchViewModel.resultItemTotal >= searchViewModel.pageOffset) {
+                        searchViewModel.apply {
+                            increasePageOffset()
+                            loadMore()
+                        }
+                    }
+                }
             }
-        }
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) { }
+        })
+
     }
+
 
     private fun initAdapter(): SearchAdapter {
         return SearchAdapter()
@@ -89,3 +115,4 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         private const val SCROLL_END = 1
     }
 }
+

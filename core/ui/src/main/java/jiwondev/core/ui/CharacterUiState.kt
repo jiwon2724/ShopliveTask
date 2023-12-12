@@ -5,6 +5,7 @@ import jiwondev.domain.model.Character
 sealed class CharacterUiState {
     object Init : CharacterUiState()
     data class LoadSuccess(val data: Character) : CharacterUiState()
+    data class PagingSuccess(val data: Character) : CharacterUiState()
     object LoadFail : CharacterUiState()
     object Loading: CharacterUiState()
 }
