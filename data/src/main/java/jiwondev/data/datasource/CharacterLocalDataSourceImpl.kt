@@ -12,8 +12,7 @@ class CharacterLocalDataSourceImpl @Inject constructor(
 ) : CharacterLocalDataSource {
     override fun addFavoriteCharacter(characterInfo: CharacterInfo) {
         preference.edit().apply {
-            val addResult = getFavoriteCharacters()
-            addResult.add(characterInfo)
+            val addResult = getFavoriteCharacters().apply { add(characterInfo) }
             putString(CHARACTER, Gson().toJson(addResult))
             apply()
         }

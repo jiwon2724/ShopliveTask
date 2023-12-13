@@ -71,29 +71,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     searchViewModel.characterState.collectLatest { state ->
-                        when (state) {
-                            is CharacterUiState.Init -> Unit
-                            is CharacterUiState.LoadSuccess -> {
-                                binding.progress.visibility = View.GONE
-                                searchViewModel.apply {
-                                    initPageOffset()
-                                    setResultItemCount(state.data.count)
-                                }
-                                characterAdapter.apply {
-                                    submitList(null)
-                                    addCharacterItem(state.data.characterInfo)
-                                }
-                            }
-                            is CharacterUiState.LoadFail -> {
-                                binding.progress.visibility = View.GONE
-                                Toast.makeText(requireContext(), "데이터 불러오기에 실패했습니다.", Toast.LENGTH_SHORT).show()
-                            }
-                            is CharacterUiState.Loading -> binding.progress.visibility = View.VISIBLE
-                            is CharacterUiState.PagingSuccess -> {
-                                binding.progress.visibility = View.GONE
-                                characterAdapter.addCharacterItem(state.data.characterInfo)
-                            }
-                        }
+                        handleCharacterUiState(state)
                     }
                 }
 
@@ -119,12 +97,43 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         }
     }
 
+    private fun handleCharacterUiState(state: CharacterUiState) {
+        when (state) {
+            is CharacterUiState.Init -> Unit
+            is CharacterUiState.Loading -> binding.progress.visibility = View.VISIBLE
+            is CharacterUiState.LoadFail -> handleLoadFail()
+            is CharacterUiState.LoadSuccess -> handleLoadSuccess(state)
+            is CharacterUiState.PagingSuccess -> handlePagingSuccess(state)
+        }
+    }
+
+    private fun handleLoadFail() {
+        binding.progress.visibility = View.GONE
+        Toast.makeText(requireContext(), "데이터 불러오기에 실패했습니다.", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun handleLoadSuccess(state: CharacterUiState.LoadSuccess) {
+        binding.progress.visibility = View.GONE
+        searchViewModel.apply {
+            initPageOffset()
+            setResultItemCount(state.data.count)
+        }
+        characterAdapter.apply {
+            submitList(null)
+            addCharacterItem(state.data.characterInfo)
+        }
+    }
+
+    private fun handlePagingSuccess(state: CharacterUiState.PagingSuccess) {
+        binding.progress.visibility = View.GONE
+        characterAdapter.addCharacterItem(state.data.characterInfo)
+    }
 
     private fun startPagination() = with(binding) {
         rvChracter.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 if (rvChracter.canScrollVertically(SCROLL_END)) {
-                    if (searchViewModel.resultItemTotal >= searchViewModel.pageOffset) {
+                    if (searchViewModel.resultTotalItem >= searchViewModel.pageOffset) {
                         searchViewModel.apply {
                             increasePageOffset()
                             loadMore()
@@ -134,7 +143,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             }
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) { }
         })
-
     }
 
     companion object {
@@ -142,4 +150,3 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         private const val SCROLL_END = 1
     }
 }
-
