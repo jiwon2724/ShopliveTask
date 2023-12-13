@@ -4,6 +4,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import jiwondev.data.datasource.CharacterLocalDataSource
+import jiwondev.data.datasource.CharacterLocalDataSourceImpl
 import jiwondev.data.datasource.CharacterRemoteDataSource
 import jiwondev.data.datasource.CharacterRemoteDataSourceImpl
 
@@ -11,5 +13,8 @@ import jiwondev.data.datasource.CharacterRemoteDataSourceImpl
 @InstallIn(SingletonComponent::class)
 interface DataSourceModule {
     @Binds
-    fun bindsCharacterDatasource(characterDataSourceImpl: CharacterRemoteDataSourceImpl): CharacterRemoteDataSource
+    fun bindsCharacterRemoteDatasource(characterDataSourceImpl: CharacterRemoteDataSourceImpl): CharacterRemoteDataSource
+
+    @Binds
+    fun bindsCharacterLocalDatasource(characterDataSourceImpl: CharacterLocalDataSourceImpl): CharacterLocalDataSource
 }

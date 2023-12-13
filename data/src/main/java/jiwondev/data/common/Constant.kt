@@ -5,6 +5,7 @@ import java.security.MessageDigest
 import java.sql.Timestamp
 
 object Constant {
+    // api
     val timeStamp = Timestamp(System.currentTimeMillis()).time.toString()
 
     fun getHash(): String {
@@ -12,4 +13,7 @@ object Constant {
         val md = MessageDigest.getInstance("MD5").digest(hash)
         return md.joinToString("") { "%02x".format(it) }
     }
+
+    // preference
+    const val CHARACTER = "character"
 }
