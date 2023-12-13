@@ -46,11 +46,12 @@ object Constant {
 }
 ```
 ## UI가 무분별하게 다시 그리는 부분이 없는가
-
+- favorite 추가시 itemView의 배경만 변경하고, Adapter의 람다로 storage에 저장 및 삭제 로직을 구현했습니다.
+- notifyDataChange 사용을 지양하고, ListAdapter의 currentList를 핸들링하여 submitList를 사용해 UI 렌더링 로직을 구현했습니다.
 
 ## favorite character 관리 point
-- Android Jetpack Datastore를 사용하여 favorite에 등록한 카드들을 storage에 저장하여 관리했습니다.
-- Kotlin Flow를 사용하여 비동기 방식으로 데이터를 저장했습니다.
+- sharedPreference를 통하여 디바이스 내부 저장소에 favorite 캐릭터를 저장하여 관리했습니다.
+- sharedPreference의 읽기, 추가, 삭제 함수를 만들어 클릭 이벤트에 함수를 호출하는 로직을 작성했습니다.
 
 ## api 호출 조건을 충족했는가
 - 검색 api의 무분별한 call을 막기위해 debounce기능을 구현했습니다.
