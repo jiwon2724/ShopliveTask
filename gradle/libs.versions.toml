@@ -10,6 +10,7 @@ serializationJson = "1.5.1"
 okHttp = "4.10.0"
 javaxInject = "1"
 coil = "2.5.0"
+gson = "2.9.0"
 
 [libraries]
 # android
@@ -33,7 +34,9 @@ squareup-okhttp3-logging-interceptor = { group = "com.squareup.okhttp3", name = 
 squareup-retrofit2 = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 
 # image
-# image
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+
+# storage
+squareup-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "gson" }
 
 [plugins]

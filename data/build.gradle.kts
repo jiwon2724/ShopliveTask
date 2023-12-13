@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.squareup.okhttp3)
     implementation(libs.serialization.converter)
     implementation(libs.serialization.json)
+    implementation(libs.squareup.gson)
 
     implementation(project(":domain"))
 }
