@@ -5,11 +5,11 @@ import jiwondev.domain.repository.FavoriteRepository
 import javax.inject.Inject
 
 class FavoriteUseCase @Inject constructor(private val favoriteRepository: FavoriteRepository) {
-    fun addFavoriteCharacter(characterInfo: CharacterInfo) {
+    suspend fun addFavoriteCharacter(characterInfo: CharacterInfo) {
         favoriteRepository.addFavoriteCharacter(characterInfo)
     }
 
-    fun deleteFavoriteCharacter(characterInfo: CharacterInfo) {
+    suspend fun deleteFavoriteCharacter(characterInfo: CharacterInfo) {
         favoriteRepository.deleteFavoriteCharacter(characterInfo)
     }
 

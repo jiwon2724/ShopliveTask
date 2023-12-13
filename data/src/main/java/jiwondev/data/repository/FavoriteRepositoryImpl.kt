@@ -8,11 +8,11 @@ import javax.inject.Inject
 class FavoriteRepositoryImpl @Inject constructor(
     private val characterLocalDataSource: CharacterLocalDataSource
 ) : FavoriteRepository {
-    override fun addFavoriteCharacter(characterInfo: CharacterInfo) {
+    override suspend fun addFavoriteCharacter(characterInfo: CharacterInfo) {
         characterLocalDataSource.addFavoriteCharacter(characterInfo)
     }
 
-    override fun deleteFavoriteCharacter(characterInfo: CharacterInfo) {
+    override suspend fun deleteFavoriteCharacter(characterInfo: CharacterInfo) {
         characterLocalDataSource.deleteFavoriteCharacter(characterInfo)
     }
 

@@ -4,8 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import jiwondev.core.ui.CharacterViewHolder
-import jiwondev.core.ui.Constant
 import jiwondev.core.ui.databinding.ItemCharacterBinding
 import jiwondev.domain.model.CharacterInfo
 
@@ -35,11 +33,13 @@ class SearchAdapter(
     fun addCharacterItem(newItem: List<CharacterInfo>) {
         val currentList = currentList.toMutableList()
         currentList.addAll(newItem)
+        currentList.distinct()
         submitList(currentList)
     }
 
     fun addFavoriteCharacterItem(newItem: CharacterInfo) {
         val currentList = currentList.toMutableList()
+        if (currentList.size >= FAVORITE_MAX_SIZE) currentList.removeFirst()
         currentList.add(newItem)
         submitList(currentList)
     }
@@ -48,5 +48,13 @@ class SearchAdapter(
         val currentList = currentList.toMutableList()
         currentList.remove(removeItem)
         submitList(currentList)
+    }
+
+    init {
+        setHasStableIds(true)
+    }
+
+    companion object {
+        private const val FAVORITE_MAX_SIZE = 5
     }
 }

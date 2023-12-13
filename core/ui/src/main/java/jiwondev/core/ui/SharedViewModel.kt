@@ -33,15 +33,15 @@ class SharedViewModel @Inject constructor(private val favoriteUseCase: FavoriteU
     }
 
     fun addCharacter(characterInfo: CharacterInfo) {
-        favoriteUseCase.addFavoriteCharacter(characterInfo)
         viewModelScope.launch {
+            favoriteUseCase.addFavoriteCharacter(characterInfo)
             _favoriteState.emit(FavoriteUiState.Add(characterInfo))
         }
     }
 
     fun deleteCharacter(characterInfo: CharacterInfo) {
-        favoriteUseCase.deleteFavoriteCharacter(characterInfo)
         viewModelScope.launch {
+            favoriteUseCase.deleteFavoriteCharacter(characterInfo)
             _favoriteState.emit(FavoriteUiState.Delete(characterInfo))
         }
     }
