@@ -3,7 +3,8 @@ package jiwondev.data.datasource
 import jiwondev.domain.model.CharacterInfo
 
 interface CharacterLocalDataSource {
-    suspend fun addFavoriteCharacter(characterInfo: CharacterInfo)
-    suspend fun deleteFavoriteCharacter(id: Int)
-    suspend fun getFavoriteCharacters(): ArrayList<CharacterInfo>
+    fun addFavoriteCharacter(characterInfo: CharacterInfo)
+    fun deleteFavoriteCharacter(characterInfo: CharacterInfo)
+    fun getFavoriteCharacters(): ArrayList<CharacterInfo>
+    fun isContains(characterInfo: CharacterInfo): Boolean
 }
