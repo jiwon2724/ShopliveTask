@@ -98,6 +98,6 @@ chore: 기타 변경 사항
 |DI|Hilt|
 |네트워크|Retrofit2, OkHttp, Kotlin Serialization|
 |이미지|Coil|
-|저장소|Datastore|
+|저장소|SharedPreference|
 |gradle|Kotlin DSL, Version-Catalog(toml)|
 
