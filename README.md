@@ -48,6 +48,7 @@ object Constant {
 ## UI가 무분별하게 다시 그리는 부분이 없는가
 - favorite 추가시 itemView의 배경만 변경하고, Adapter의 람다로 storage에 저장 및 삭제 로직을 구현했습니다.
 - notifyDataChange 사용을 지양하고, ListAdapter의 currentList를 핸들링하여 submitList를 사용해 UI 렌더링 로직을 구현했습니다.
+- data class의 isFavorite 프로퍼티를 사용하여 클릭 한 아이템에 대해서 스크롤 이벤트시 상태를 유지하도록 로직을 구현했습니다.
 
 ## favorite character 관리 point
 - sharedPreference를 통하여 디바이스 내부 저장소에 favorite 캐릭터를 저장하여 관리했습니다.
