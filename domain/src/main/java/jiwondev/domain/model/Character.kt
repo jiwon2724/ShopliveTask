@@ -13,4 +13,5 @@ data class CharacterInfo(
     val name: String,
     val description: String,
     val thumbnail: String,
+    var isFavorite: Boolean = false
 )

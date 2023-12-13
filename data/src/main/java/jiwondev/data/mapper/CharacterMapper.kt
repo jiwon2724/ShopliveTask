@@ -22,7 +22,7 @@ object CharacterMapper {
                 id = result.id,
                 name = result.name,
                 description = result.description,
-                thumbnail = result.thumbnail.path
+                thumbnail = "${result.thumbnail.path}.${result.thumbnail.extension}".replace("http", "https")
             )
         }
     }

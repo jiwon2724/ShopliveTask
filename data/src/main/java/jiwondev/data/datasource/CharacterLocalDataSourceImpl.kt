@@ -10,25 +10,30 @@ import javax.inject.Inject
 class CharacterLocalDataSourceImpl @Inject constructor(
     private val preference: SharedPreferences
 ) : CharacterLocalDataSource {
-    override suspend fun addFavoriteCharacter(characterInfo: CharacterInfo) {
+    override fun addFavoriteCharacter(characterInfo: CharacterInfo) {
         preference.edit().apply {
-            val addResult = getFavoriteCharacters().add(characterInfo)
+            val addResult = getFavoriteCharacters()
+            addResult.add(characterInfo)
             putString(CHARACTER, Gson().toJson(addResult))
             apply()
         }
     }
 
-    override suspend fun deleteFavoriteCharacter(id: Int) {
+    override fun deleteFavoriteCharacter(characterInfo: CharacterInfo) {
         preference.edit().apply {
-            val deleteResult = getFavoriteCharacters().filter { it.id != id }
+            val deleteResult = getFavoriteCharacters()
+            deleteResult.removeIf { it.id == characterInfo.id }
             putString(CHARACTER, Gson().toJson(deleteResult))
             apply()
         }
     }
 
-    override suspend fun getFavoriteCharacters(): ArrayList<CharacterInfo> {
+    override fun getFavoriteCharacters(): ArrayList<CharacterInfo> {
         val characters = preference.getString(CHARACTER, null)
         val type = object : TypeToken<ArrayList<CharacterInfo>>() {}.type
         return Gson().fromJson(characters, type) ?: arrayListOf()
     }
+
+    override fun isContains(characterInfo: CharacterInfo): Boolean =
+        getFavoriteCharacters().contains(characterInfo.copy(isFavorite = true))
 }

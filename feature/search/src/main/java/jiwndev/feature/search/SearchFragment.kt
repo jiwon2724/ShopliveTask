@@ -1,11 +1,11 @@
 package jiwndev.feature.search
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,13 +16,25 @@ import dagger.hilt.android.AndroidEntryPoint
 import jiwndev.feature.search.databinding.FragmentSearchBinding
 import jiwondev.core.base.BaseFragment
 import jiwondev.core.ui.CharacterUiState
+import jiwondev.core.ui.SearchAdapter
+import jiwondev.core.ui.SharedViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     private val searchViewModel: SearchViewModel by viewModels()
-    private val characterAdapter: SearchAdapter by lazy { initAdapter() }
+    private val sharedViewModel: SharedViewModel by activityViewModels()
+
+    private val characterAdapter: SearchAdapter by lazy {
+        SearchAdapter { characterInfo, position, view ->
+            if (sharedViewModel.isContains(characterInfo)) {
+                sharedViewModel.deleteCharacter(characterInfo)
+            } else {
+                sharedViewModel.addCharacter(characterInfo)
+            }
+        }
+    }
 
     override fun bindingFactory(inflater: LayoutInflater, parent: ViewGroup?): FragmentSearchBinding {
         return FragmentSearchBinding.inflate(inflater, parent, false)
@@ -39,6 +51,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
         binding.rvChracter.apply {
             layoutManager = GridLayoutManager(context, 2)
             adapter = characterAdapter
+            setHasFixedSize(true)
         }
     }
 
@@ -56,32 +69,52 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     private fun startObservingState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                searchViewModel.characterState.collectLatest { state ->
-                    when (state) {
-                        is CharacterUiState.Init -> Unit
-                        is CharacterUiState.LoadSuccess -> {
-                            binding.progress.visibility = View.GONE
-                            searchViewModel.apply {
-                                initPageOffset()
-                                setResultItemCount(state.data.count)
+                launch {
+                    searchViewModel.characterState.collectLatest { state ->
+                        when (state) {
+                            is CharacterUiState.Init -> Unit
+                            is CharacterUiState.LoadSuccess -> {
+                                binding.progress.visibility = View.GONE
+                                searchViewModel.apply {
+                                    initPageOffset()
+                                    setResultItemCount(state.data.count)
+                                }
+                                characterAdapter.apply {
+                                    submitList(null)
+                                    addCharacterItem(state.data.characterInfo)
+                                }
                             }
-                            characterAdapter.apply {
-                                submitList(null)
-                                addCharacterItem(state.data.characterInfo)
+                            is CharacterUiState.LoadFail -> {
+                                binding.progress.visibility = View.GONE
+                                Toast.makeText(requireContext(), "데이터 불러오기에 실패했습니다.", Toast.LENGTH_SHORT).show()
                             }
-                            Log.d("currentList : ", characterAdapter.currentList.size.toString())
-                        }
-                        is CharacterUiState.LoadFail -> {
-                            binding.progress.visibility = View.GONE
-                            Toast.makeText(requireContext(), "데이터 불러오기에 실패했습니다.", Toast.LENGTH_SHORT).show()
-                        }
-                        is CharacterUiState.Loading -> binding.progress.visibility = View.VISIBLE
-                        is CharacterUiState.PagingSuccess -> {
-                            binding.progress.visibility = View.GONE
-                            characterAdapter.addCharacterItem(state.data.characterInfo)
+                            is CharacterUiState.Loading -> binding.progress.visibility = View.VISIBLE
+                            is CharacterUiState.PagingSuccess -> {
+                                binding.progress.visibility = View.GONE
+                                characterAdapter.addCharacterItem(state.data.characterInfo)
+                            }
                         }
                     }
                 }
+
+//                launch {
+//                    sharedViewModel.favoriteState.collectLatest { state ->
+//                        when (state) {
+//                            is FavoriteUiState.Init -> Unit
+//                            is FavoriteUiState.Favorite -> {
+//                                characterAdapter.apply {
+//                                    addCharacterItem(state.data)
+//                                }
+//                            }
+//                            is FavoriteUiState.Delete -> {
+//                                characterAdapter.removeCharacterItem(state.data)
+//                            }
+//                            is FavoriteUiState.Add -> {
+//                                characterAdapter.addFavoriteCharacterItem(state.data)
+//                            }
+//                        }
+//                    }
+//                }
             }
         }
     }
@@ -102,11 +135,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) { }
         })
 
-    }
-
-
-    private fun initAdapter(): SearchAdapter {
-        return SearchAdapter()
     }
 
     companion object {
