@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
 
     implementation(project(":domain"))
 }
