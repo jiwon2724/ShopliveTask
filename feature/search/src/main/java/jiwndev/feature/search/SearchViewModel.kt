@@ -19,15 +19,14 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(private val characterUseCase: CharacterUseCase) : ViewModel() {
     private var searchJob: Job = Job()
+
     var pageOffset = 0
         private set
 
-    var resultItemTotal = 0
+    var resultTotalItem = 0
         private set
 
     private var searchKeyword: String = ""
-
-    val characters: ArrayList<CharacterInfo> = arrayListOf()
 
     private var _characterState = MutableStateFlow<CharacterUiState>(CharacterUiState.Init)
     val characterState: StateFlow<CharacterUiState>
@@ -38,14 +37,10 @@ class SearchViewModel @Inject constructor(private val characterUseCase: Characte
         searchJob.cancel()
         searchJob = viewModelScope.launch {
             _characterState.emit(CharacterUiState.Loading)
-            delay(300)
+            delay(DATA_UPDATE_PERIOD)
 
             when (val result = characterUseCase.getCharacter(searchKeyword, pageOffset)) {
-                is Result.Success -> {
-                    characters.addAll(result.data.characterInfo)
-                    _characterState.emit(CharacterUiState.LoadSuccess(result.data))
-                }
-
+                is Result.Success -> _characterState.emit(CharacterUiState.LoadSuccess(result.data))
                 is Result.Error -> _characterState.emit(CharacterUiState.LoadFail)
             }
         }
@@ -54,18 +49,14 @@ class SearchViewModel @Inject constructor(private val characterUseCase: Characte
     fun loadMore() {
         viewModelScope.launch {
             when (val result = characterUseCase.getCharacter(searchKeyword, pageOffset)) {
-                is Result.Success -> {
-                    characters.addAll(result.data.characterInfo)
-                    _characterState.emit(CharacterUiState.PagingSuccess(result.data))
-                }
-
+                is Result.Success -> _characterState.emit(CharacterUiState.PagingSuccess(result.data))
                 is Result.Error -> _characterState.emit(CharacterUiState.LoadFail)
             }
         }
     }
 
     fun increasePageOffset() {
-        pageOffset += 10
+        pageOffset += PAGE_OFFSET
     }
 
     fun initPageOffset() {
@@ -77,6 +68,11 @@ class SearchViewModel @Inject constructor(private val characterUseCase: Characte
     }
 
     fun setResultItemCount(count: Int) {
-        resultItemTotal = count
+        resultTotalItem = count
+    }
+
+    companion object {
+        private const val PAGE_OFFSET = 10
+        private const val DATA_UPDATE_PERIOD = 300L
     }
 }

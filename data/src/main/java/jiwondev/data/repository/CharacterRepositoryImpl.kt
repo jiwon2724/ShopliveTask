@@ -15,6 +15,13 @@ class CharacterRepositoryImpl @Inject constructor(
         nameStartsWith: String,
         offset: Int
     ): Result<Character> {
-        return setResult { CharacterMapper.mapperToCharacter(characterRemoteDataSource.getCharacter(nameStartsWith, offset)) }
+        return setResult {
+            CharacterMapper.mapperToCharacter(
+                characterRemoteDataSource.getCharacter(
+                    nameStartsWith,
+                    offset
+                )
+            )
+        }
     }
 }
