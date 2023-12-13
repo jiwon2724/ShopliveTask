@@ -6,6 +6,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import jiwondev.data.repository.CharacterRepositoryImpl
+import jiwondev.data.repository.FavoriteRepositoryImpl
 import jiwondev.domain.repository.CharacterRepository
 import javax.inject.Singleton
 
@@ -14,4 +15,7 @@ import javax.inject.Singleton
 interface RepositoryModule {
     @Binds
     abstract fun bindCharacterRepository(characterRepository: CharacterRepositoryImpl): CharacterRepository
+
+    @Binds
+    abstract fun bindFavoriteRepository(favoriteRepository: FavoriteRepositoryImpl): CharacterRepository
 }
