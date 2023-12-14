@@ -49,10 +49,6 @@ class SearchAdapter(
         submitList(currentList)
     }
 
-    init {
-        setHasStableIds(true)
-    }
-
     companion object {
         private const val FAVORITE_MAX_SIZE = 5
     }
