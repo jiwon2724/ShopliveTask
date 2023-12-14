@@ -13,15 +13,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SharedViewModel @Inject constructor(private val favoriteUseCase: FavoriteUseCase) : ViewModel() {
-    var itemPosition: Int = 0
-        private set
-
-    var itemSize: Int = 0
-        private set
-
-    lateinit var currentCharacterInfo: CharacterInfo
-        private set
-
     private var _favoriteState = MutableStateFlow<FavoriteUiState>(FavoriteUiState.Init)
     val favoriteState: StateFlow<FavoriteUiState>
         get() = _favoriteState.asStateFlow()
@@ -34,6 +25,10 @@ class SharedViewModel @Inject constructor(private val favoriteUseCase: FavoriteU
 
     fun addCharacter(characterInfo: CharacterInfo) {
         viewModelScope.launch {
+            val favorites = favoriteUseCase.getFavoriteCharacters()
+            if (favorites.size >= FAVORITE_MAX_SIZE) {
+                favoriteUseCase.deleteFavoriteCharacter(favorites.removeFirst())
+            }
             favoriteUseCase.addFavoriteCharacter(characterInfo)
             _favoriteState.emit(FavoriteUiState.Add(characterInfo))
         }
@@ -46,19 +41,11 @@ class SharedViewModel @Inject constructor(private val favoriteUseCase: FavoriteU
         }
     }
 
-    fun isContains(characterInfo: CharacterInfo): Boolean {
+    fun isCharacterContains(characterInfo: CharacterInfo): Boolean {
         return favoriteUseCase.isCharacterContains(characterInfo)
     }
 
-    fun setItemPosition(position: Int) {
-        itemPosition = position
-    }
-
-    fun setCurrentCharacterInfo(characterInfo: CharacterInfo) {
-        currentCharacterInfo = characterInfo
-    }
-
-    fun setItemSize(size: Int) {
-        itemSize = size
+    companion object {
+        private const val FAVORITE_MAX_SIZE = 5
     }
 }
