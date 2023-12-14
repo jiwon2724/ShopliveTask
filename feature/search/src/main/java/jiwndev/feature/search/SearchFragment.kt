@@ -27,8 +27,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private val characterAdapter: SearchAdapter by lazy {
-        SearchAdapter { characterInfo, position, view ->
-            if (sharedViewModel.isContains(characterInfo)) {
+        SearchAdapter { characterInfo ->
+            if (sharedViewModel.isCharacterContains(characterInfo)) {
                 sharedViewModel.deleteCharacter(characterInfo)
             } else {
                 sharedViewModel.addCharacter(characterInfo)
@@ -48,7 +48,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     }
 
     private fun initRecyclerView() {
-        binding.rvChracter.apply {
+        binding.rvCharacter.apply {
             layoutManager = GridLayoutManager(context, 2)
             adapter = characterAdapter
             setHasFixedSize(true)
@@ -69,30 +69,9 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     private fun startObservingState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    searchViewModel.characterState.collectLatest { state ->
-                        handleCharacterUiState(state)
-                    }
+                searchViewModel.characterState.collectLatest { state ->
+                    handleCharacterUiState(state)
                 }
-
-//                launch {
-//                    sharedViewModel.favoriteState.collectLatest { state ->
-//                        when (state) {
-//                            is FavoriteUiState.Init -> Unit
-//                            is FavoriteUiState.Favorite -> {
-//                                characterAdapter.apply {
-//                                    addCharacterItem(state.data)
-//                                }
-//                            }
-//                            is FavoriteUiState.Delete -> {
-//                                characterAdapter.removeCharacterItem(state.data)
-//                            }
-//                            is FavoriteUiState.Add -> {
-//                                characterAdapter.addFavoriteCharacterItem(state.data)
-//                            }
-//                        }
-//                    }
-//                }
             }
         }
     }
@@ -130,9 +109,9 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>() {
     }
 
     private fun startPagination() = with(binding) {
-        rvChracter.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        rvCharacter.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                if (rvChracter.canScrollVertically(SCROLL_END)) {
+                if (rvCharacter.canScrollVertically(SCROLL_END)) {
                     if (searchViewModel.resultTotalItem >= searchViewModel.pageOffset) {
                         searchViewModel.apply {
                             increasePageOffset()

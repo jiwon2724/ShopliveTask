@@ -1,6 +1,5 @@
 package jiwondev.feature.favorite
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +22,7 @@ class FavoriteFragment : BaseFragment<FragmentFavoriteBinding>() {
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private val characterAdapter: SearchAdapter by lazy {
-        SearchAdapter { characterInfo, position, view ->
+        SearchAdapter { characterInfo ->
             sharedViewModel.deleteCharacter(characterInfo)
         }
     }
