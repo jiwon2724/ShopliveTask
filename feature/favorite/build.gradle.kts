@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "jiwondev.feature.favorite"
     compileSdk = 34
-    viewBinding { enable = true  }
+    viewBinding { enable = true }
 
     defaultConfig {
         minSdk = 26
@@ -37,9 +37,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.google.material)
     implementation(libs.androidx.core)
-
-    implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    implementation(libs.androidx.fragemnt.ktx)
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
