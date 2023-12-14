@@ -1,14 +1,13 @@
 package jiwondev.core.ui
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import jiwondev.core.ui.databinding.ItemCharacterBinding
 import jiwondev.domain.model.CharacterInfo
 
 class SearchAdapter(
-    private val onClick: (CharacterInfo, Int, View) -> Unit
+    private val onClick: (CharacterInfo) -> Unit
 ) : ListAdapter<CharacterInfo, CharacterViewHolder>(Constant.CHARACTER_DIFF_CALLBACK) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharacterViewHolder {
         return CharacterViewHolder(
